@@ -1,6 +1,27 @@
+from abc import ABC, abstractmethod
+
 import numpy as np
 
-class Sigmoid(object):
+
+class ActivationBase(ABC):
+    def __init__(self, **kwargs):
+        super().__init__()
+
+    def __call__(self, z):
+        if z.ndim == 1:
+            z = z.reshape(1, -1)
+        return self.fn(z)
+
+    @abstractmethod
+    def fn(self, z):
+        raise NotImplementedError
+
+    @abstractmethod
+    def grad(self, x, **kwargs):
+        raise NotImplementedError
+
+
+class Sigmoid(ActivationBase):
     def __init__(self):
         """
         A logistic sigmoid activation function.
@@ -41,7 +62,7 @@ class Sigmoid(object):
         return fn_x * (1 - fn_x) * (1 - 2 * fn_x)
 
 
-class ReLU(object):
+class ReLU(ActivationBase):
     """
     A rectified linear activation function.
 
@@ -106,7 +127,7 @@ class ReLU(object):
         return np.zeros_like(x)
 
 
-class Tanh(object):
+class Tanh(ActivationBase):
     def __init__(self):
         """
         A hyperbolic tangent activation function.
@@ -147,7 +168,7 @@ class Tanh(object):
         return -2 * tanh_x * (1 - tanh_x ** 2)
 
 
-class Exponential(object):
+class Exponential(ActivationBase):
     def __init__(self):
         """
         An exponential (base e) activation function.
