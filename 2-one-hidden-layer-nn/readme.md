@@ -1,5 +1,4 @@
-
-#MATH6001-106. Nonlinear Optimization in Machine Learning.#
+<b>MATH6001-106. Nonlinear Optimization in Machine Learning.</b>
 
 Programming Project 2.
 
