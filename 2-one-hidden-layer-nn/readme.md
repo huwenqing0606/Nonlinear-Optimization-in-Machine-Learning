@@ -1,6 +1,6 @@
 <b>MATH6001-106. Nonlinear Optimization in Machine Learning.</b>
 
-Programming Project 2.
+2. The shape of output function for one hidden layer funnly connected neural networks.
 
 Consider a neural network with one hidden layer that consists of $p$ neurons and input $x\in \mathbb{R}^1$, output $y\in \mathbb{R}^1$. The neural network function has the form 
 $y(x)=\sum\limits_{j=1}^p c_j \sigma(a_j x- b_j) \ , $
