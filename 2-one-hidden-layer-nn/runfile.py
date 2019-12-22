@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from activations import Sigmoid, ReLU, Tanh, Exponential
 from network import one_hidden_layer_network
 
-layer_neuron_number=100000
+layer_neuron_number=10
 
 dic={'Sigmoid': Sigmoid, 'ReLU': ReLU, 'Tanh': Tanh, 'Exponential': Exponential}
 namelist=['Sigmoid', 'ReLU', 'Tanh', 'Exponential']
