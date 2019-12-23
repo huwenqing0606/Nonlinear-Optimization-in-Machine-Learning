@@ -5,13 +5,12 @@ from activations import Sigmoid, ReLU, Tanh, Exponential
 from network import one_hidden_layer_network
 from mpl_toolkits.mplot3d import Axes3D
 
-layer_neuron_number=10
-training_size=10
-N=100
+layer_neuron_number=100000
+training_size=1
+N=30
 
 dic={'Sigmoid': Sigmoid, 'ReLU': ReLU, 'Tanh': Tanh, 'Exponential': Exponential}
-#namelist=['Sigmoid', 'ReLU', 'Tanh', 'Exponential']
-namelist=['ReLU']
+namelist=['Sigmoid', 'ReLU', 'Tanh', 'Exponential']
 
 weight_a_secondpart=np.random.randn(layer_neuron_number-2)
 weight_b=np.random.randn(layer_neuron_number) 
