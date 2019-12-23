@@ -27,14 +27,14 @@ for n in range(training_size):
 
 def plot_network_loss():
     for name in namelist:
-        a_1 = np.linspace(-500, 500, N)
-        a_2 = np.linspace(-500, 500, N)
+        a_1 = np.linspace(-10, 10, N)
+        a_2 = np.linspace(-10, 10, N)
         L = [[0 for i in range(N)] for j in range(N)]
         for i in range(N):
             for j in range (N):
                 weight_a=[]
-                weight_a.append(a_1)
-                weight_a.append(a_2)
+                weight_a.append(a_1[i])
+                weight_a.append(a_2[j])
                 for k in range(layer_neuron_number-2):
                     weight_a.append(weight_a_secondpart[k])
                 network_output=one_hidden_layer_network(weight_a=weight_a, 
@@ -46,22 +46,18 @@ def plot_network_loss():
                 for n in range(training_size):
                     Z.append((Y[n]-network_output.output(X[n]))**2)                
                 L[i][j]=0.5*np.mean(np.array(Z))
-                
-        u=[]
-        v=[]
-        w=[]
-        for i in range(N):
-            for j in range (N):
-               u.append(a_1[i])
-               v.append(a_2[j])
-               w.append(L[i][j])
-               
-        #fig = plt.figure()
-        #ax = Axes3D(fig)
-        #u, v = np.meshgrid(u, v)
-        #ax.plot_surface(u, v, w, rstride=1, cstride=1, cmap='rainbow')
-        ax = plt.subplot(111, projection='3d')  
-        ax.scatter(u,v,w) 
+                              
+        fig = plt.figure()
+        ax = Axes3D(fig)
+        u=np.array(a_1)
+        v=np.array(a_2)
+        w=np.array(L)
+        u, v = np.meshgrid(u, v)
+        ax.plot_surface(u, v, w, rstride=1, cstride=1, cmap='rainbow')
+        ax.set_title(name+" empirical loss landscape, hidden layer neuron number="+str(layer_neuron_number)+", training size="+str(training_size))
+        ax.set_zlabel('Empirical Loss') 
+        ax.set_xlabel('weight a_1')
+        ax.set_ylabel('weight a_2')
         plt.show()
 
 if __name__ == "__main__":
