@@ -5,9 +5,9 @@ from activations import Sigmoid, ReLU, Tanh, Exponential
 from network import one_hidden_layer_network
 from mpl_toolkits.mplot3d import Axes3D
 
-layer_neuron_number=100000
+layer_neuron_number=10000
 training_size=1
-N=30
+N=100
 
 dic={'Sigmoid': Sigmoid, 'ReLU': ReLU, 'Tanh': Tanh, 'Exponential': Exponential}
 namelist=['Sigmoid', 'ReLU', 'Tanh', 'Exponential']
@@ -57,7 +57,10 @@ def plot_network_loss():
         ax.set_zlabel('Empirical Loss') 
         ax.set_xlabel('weight a_1')
         ax.set_ylabel('weight a_2')
+        plt.legend()    
+        plt.savefig('OneHiddenLayerNN-Loss_'+name+'_layersize='+str(layer_neuron_number)+", training size="+str(training_size)+'.jpg', bbox_inches='tight')
         plt.show()
+        plt.close()
 
 if __name__ == "__main__":
     plot_network_loss()
