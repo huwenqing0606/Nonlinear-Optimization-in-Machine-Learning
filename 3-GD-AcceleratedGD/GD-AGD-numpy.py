@@ -4,9 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
+from matplotlib import animation
 
 A=1
-B=1
+B=5
 epsilon=0.1
 
 
@@ -128,7 +129,7 @@ if __name__ == "__main__":
         trajectory_x_2=[]
         loss=[]
         distance=[]
-        function=function_h()
+        function=function_f()
         for i in range(1000):
             trajectory_x_1.append(x_current[0]) 
             trajectory_x_2.append(x_current[1])
@@ -179,4 +180,26 @@ if __name__ == "__main__":
         plt.ylabel('distance to minimizer')
         plt.title(optname)
         plt.show()
-    
+        
+        fig = plt.figure()
+        ax=Axes3D(fig)
+        line=ax.plot([],[],'b:')
+        point=ax.plot([],[],'bo',markersize=10)
+        images=[]
+        
+        def init():
+            line=ax.plot([],[],'b:',markersize=8)
+            point=ax.plot([],[],'bo',markersize=10)
+            return line,point
+        
+        def anmi(i):
+            ax.clear()
+            line =ax.plot(trajectory_x_1[0:10*i],trajectory_x_2[0:10*i],loss[0:10*i],'b:', markersize=8)
+            point = ax.plot(trajectory_x_1[10*i-1:10*i],trajectory_x_2[10*i-1:10*i],loss[10*i-1:10*i],'bo', markersize=10)
+            return line,point
+        
+        anim = animation.FuncAnimation(fig, anmi, init_func=init,
+                                       frames=100, interval=100, blit=False,repeat=False)
+
+        anim.save(optname+'.gif', writer='imagemagick')
+        
