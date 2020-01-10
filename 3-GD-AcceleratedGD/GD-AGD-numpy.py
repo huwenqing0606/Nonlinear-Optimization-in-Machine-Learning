@@ -7,7 +7,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
 
 A=1
-B=5
+B=2
 epsilon=0.1
 
 
@@ -186,20 +186,16 @@ if __name__ == "__main__":
         line=ax.plot([],[],'b:')
         point=ax.plot([],[],'bo',markersize=10)
         images=[]
-        
         def init():
             line=ax.plot([],[],'b:',markersize=8)
             point=ax.plot([],[],'bo',markersize=10)
             return line,point
-        
         def anmi(i):
             ax.clear()
-            line =ax.plot(trajectory_x_1[0:10*i],trajectory_x_2[0:10*i],loss[0:10*i],'b:', markersize=8)
-            point = ax.plot(trajectory_x_1[10*i-1:10*i],trajectory_x_2[10*i-1:10*i],loss[10*i-1:10*i],'bo', markersize=10)
+            line =ax.plot(trajectory_x_1[0:i],trajectory_x_2[0:i],loss[0:i],'b:', markersize=8)
+            point = ax.plot(trajectory_x_1[i-1:i],trajectory_x_2[i-1:i],loss[i-1:i],'bo', markersize=10)
             return line,point
-        
         anim = animation.FuncAnimation(fig, anmi, init_func=init,
-                                       frames=100, interval=100, blit=False,repeat=False)
-
-        anim.save(optname+'.gif', writer='imagemagick')
+                                       frames=1000, interval=10, blit=False,repeat=False)
+        anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_alpha='+str(alpha)+'_beta='+str(beta)+'_eps='+str(epsilon)+'.gif', writer='imagemagick')
         
