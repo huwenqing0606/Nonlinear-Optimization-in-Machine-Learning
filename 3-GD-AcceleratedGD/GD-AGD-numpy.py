@@ -6,7 +6,7 @@ import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 
 A=1
-B=2
+B=1
 epsilon=0.1
 
 
@@ -53,6 +53,27 @@ class function_g(object):
     def grad(self, x_1, x_2):
         return np.array([self.axA*x_1+3*self.eps*x_1*np.sqrt(x_1**2+x_2**2), 
                          self.axB*x_2+3*self.eps*x_2*np.sqrt(x_1**2+x_2**2)])
+
+    
+
+"""
+The non-convex function h and its gradients
+h(x_1, x_2)=0.5 A x_1^2 - 0.5 B x_2^2
+"""
+class function_h(object):
+    def __init__(self,
+                 axA=A,
+                 axB=B,
+                 name="h"):
+        self.axA=axA
+        self.axB=axB
+        self.name=name
+        
+    def value(self, x_1, x_2):
+        return 0.5*self.axA*x_1*x_1-0.5*self.axB*x_2*x_2
+    
+    def grad(self, x_1, x_2):
+        return np.array([self.axA*x_1, -self.axB*x_2])
 
     
     
@@ -107,7 +128,7 @@ if __name__ == "__main__":
         trajectory_x_2=[]
         loss=[]
         distance=[]
-        function=function_f()
+        function=function_h()
         for i in range(1000):
             trajectory_x_1.append(x_current[0]) 
             trajectory_x_2.append(x_current[1])
