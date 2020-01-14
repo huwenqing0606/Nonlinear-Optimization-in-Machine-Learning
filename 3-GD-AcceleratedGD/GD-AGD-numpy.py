@@ -1,3 +1,4 @@
+
 #GD, Heavy-Ball and Nesterov for qudratic functions and perturbed quadratic functions#
 
 import numpy as np
@@ -7,7 +8,7 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
 
 A=1
-B=2
+B=1
 epsilon=0.1
 
 
@@ -151,7 +152,9 @@ if __name__ == "__main__":
         ax.plot_surface(u, v, w, rstride=1, cstride=1, cmap='summer')
         ax.set_xlabel('x_1')
         ax.set_ylabel('x_2')
-        ax.set_zlabel(function.name+'(x_1, x_2)') 
+        ax.set_zlabel(function.name+'(x_1, x_2)')
+        plt.savefig('Landscape_'+optname+'_A='+str(A)+'_B='+str(B)+'_alpha='+str(alpha)+'_beta='+str(beta)+'_eps='+str(epsilon)+'.jpg')
+        plt.show()
 
         fig = plt.figure()
         mpl.rcParams['legend.fontsize'] = 10
@@ -173,12 +176,14 @@ if __name__ == "__main__":
         plt.xlabel('iteration')
         plt.ylabel('function error to minimum')
         plt.title(optname)
-        plt.show()    
+        plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_alpha='+str(alpha)+'_beta='+str(beta)+'_eps='+str(epsilon)+'.jpg')
+        plt.show()
 
         plt.plot(distance)
         plt.xlabel('iteration')
         plt.ylabel('distance to minimizer')
         plt.title(optname)
+        plt.savefig('Distance_To_Zero_'+optname+'_A='+str(A)+'_B='+str(B)+'_alpha='+str(alpha)+'_beta='+str(beta)+'_eps='+str(epsilon)+'.jpg')
         plt.show()
         
         fig = plt.figure()
@@ -198,4 +203,4 @@ if __name__ == "__main__":
         anim = animation.FuncAnimation(fig, anmi, init_func=init,
                                        frames=1000, interval=10, blit=False,repeat=False)
         anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_alpha='+str(alpha)+'_beta='+str(beta)+'_eps='+str(epsilon)+'.gif', writer='imagemagick')
-        
+
