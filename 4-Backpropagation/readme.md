@@ -6,4 +6,4 @@ Consider an $L$-hidden-layer fully connected neural network with hidden layer si
 
 Experiment on (1) different hidden layer sizes ($n_1, ..., n_L$); (2) different number of hidden layers ($L$); (3) different sizes of the training data set ($n$).
 
-Following the above, plot the 3-d graph of the loss function and the trajectory of the gradient descent algorithm by picking two network parameters as variables and randomly choosing other network parameters as i.i.d. unit normal distributions.
+Following the above, plot the 3-d graph of the loss function and the trajectory of the gradient descent algorithm by picking two network parameters as variables and randomly choosing other network parameters as i.i.d. samples of unit normal distributions $\mathcal{N}(0,1)$.
