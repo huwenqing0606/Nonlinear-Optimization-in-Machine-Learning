@@ -7,8 +7,11 @@ Consider a two-dimensional quadratic function $f(x_1, x_2) = 0.5 A x_1^2 + 0.5 B
 Experiment 
 
 (1) different/random initializations; 
+
 (2) plot the trajectory as well as show its dynamics via an animation; 
+
 (3) plot the evolution of the error function as a function of number of iterations; 
+
 (4) compare on different parmeters $A, B, \epsilon>0$.
 
 Perform the same experiments for the non-convex function $h(x_1, x_2) = 0.5 A x_1^2 - 0.5 B x_2^2$.
