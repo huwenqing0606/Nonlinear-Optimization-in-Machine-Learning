@@ -1,5 +1,6 @@
 #GD, Heavy-Ball and Nesterov for qudratic functions and perturbed quadratic functions#
 #automatic differentiation in tensorflow#
+#developed under tensorflow version=1.14.0#
 
 import numpy as np
 import matplotlib.pyplot as plt
