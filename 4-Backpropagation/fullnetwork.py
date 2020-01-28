@@ -31,7 +31,8 @@ class onelayer(object):
         self.bias=bias
         
     def output(self):
-        preoutput=np.dot(self.weight, self.inputvector)+self.bias
+        print("weight*input=", self.weight*self.inputvector)
+        preoutput=self.weight*self.inputvector+self.bias
         length=preoutput.size
         print("preoutput=", preoutput)
         print("length=", length)
@@ -39,7 +40,7 @@ class onelayer(object):
         for i in range(length):
             print("i=", i)
             output.append(self.activation.fn(preoutput[i]))
-        print(np.array(output))
+        print("output=", np.array(output))
         return np.array(output)
     
 
@@ -63,25 +64,26 @@ class fullnetwork(object):
     
     def output(self, x):
         layervector=np.array(x) #layervector corresponds to the outputs of all neurons at the current layer#
+        print("layervector=", layervector)
         for l in range(self.L):
             if l==self.L-1:
-                weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l])) for i in range(1)] for j in range(self.n[l])]
+                weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l])) for i in range(self.n[l])] for j in range(1)]
                 print("weight=", np.array(weight))
-                bias=[np.random.normal(loc=0.0, scale=1.0) for k in range(1)]                        
+                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for k in range(1)]                        
                 print("bias=", np.array(bias))
                 addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
                 layervector=addlayer.output()
             elif l==0:
-                weight=[[np.random.normal(loc=0.0, scale=1.0) for i in range(self.n[l])] for j in range(1)]
+                weight=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[l])]
                 print("weight=", np.array(weight))
-                bias=[np.random.normal(loc=0.0, scale=1.0) for k in range(self.n[l])]                        
+                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[l])]                        
                 print("bias=", np.array(bias))
                 addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
                 layervector=addlayer.output()
             else:
-                weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l])) for i in range(self.n[l+1])] for j in range(self.n[l])]
+                weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l-1])) for i in range(self.n[l-1])] for j in range(self.n[l])]
                 print("weight=", np.array(weight))
-                bias=[np.random.normal(loc=0.0, scale=1.0) for k in range(self.n[l+1])]                        
+                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for k in range(self.n[l])]                        
                 print("bias=", np.array(bias))
                 addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
                 layervector=addlayer.output()
@@ -96,8 +98,8 @@ if __name__ == "__main__":
     L=5 #number of hidden layers#
     n=np.random.randint(1, 6, size=L) #network size for each hidden layer n[0]=n_1, ..., m[L-1]=n_L#
     print(n)
-#    network=fullnetwork(L=L, n=n, activation=Sigmoid())
-#    network.output(1)
+    network=fullnetwork(L=L, n=n, activation=Sigmoid())
+    network.output(1)
     weight=[[1 for i in range(2)] for j in range(3)]
     print("weight=", np.array(weight))
     bias=[1 for k in range(3)]                        
