@@ -31,14 +31,12 @@ class onelayer(object):
         self.bias=bias
         
     def output(self):
-        print("weight*input=", self.weight*self.inputvector)
-        preoutput=self.weight*self.inputvector+self.bias
-        length=preoutput.size
+        print("weight*input=", np.dot(self.weight,self.inputvector))
+        preoutput=np.dot(self.weight,self.inputvector)+self.bias
         print("preoutput=", preoutput)
-        print("length=", length)
+        length=preoutput.size
         output=[]
         for i in range(length):
-            print("i=", i)
             output.append(self.activation.fn(preoutput[i]))
         print("output=", np.array(output))
         return np.array(output)
@@ -64,26 +62,32 @@ class fullnetwork(object):
     
     def output(self, x):
         layervector=np.array(x) #layervector corresponds to the outputs of all neurons at the current layer#
+        #the initial layer#
+        print("***********************layer ", 0, "***********************")
         print("layervector=", layervector)
+        weight=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[0])]
+        print("weight=", np.array(weight))
+        bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[0])]                        
+        print("bias=", np.array(bias))
+        addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
+        layervector=addlayer.output()
+        
         for l in range(self.L):
+            print("***********************layer ", l+1, "***********************")
+            print("layervector=", layervector)
             if l==self.L-1:
+                #the last layer#
                 weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l])) for i in range(self.n[l])] for j in range(1)]
                 print("weight=", np.array(weight))
-                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for k in range(1)]                        
-                print("bias=", np.array(bias))
-                addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
-                layervector=addlayer.output()
-            elif l==0:
-                weight=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[l])]
-                print("weight=", np.array(weight))
-                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[l])]                        
+                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(1)]                        
                 print("bias=", np.array(bias))
                 addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
                 layervector=addlayer.output()
             else:
-                weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l-1])) for i in range(self.n[l-1])] for j in range(self.n[l])]
+                #all hidden layers except the last layer#
+                weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l])) for i in range(self.n[l])] for j in range(self.n[l+1])]
                 print("weight=", np.array(weight))
-                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for k in range(self.n[l])]                        
+                bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[l+1])]                        
                 print("bias=", np.array(bias))
                 addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
                 layervector=addlayer.output()
@@ -97,14 +101,6 @@ test the output
 if __name__ == "__main__":
     L=5 #number of hidden layers#
     n=np.random.randint(1, 6, size=L) #network size for each hidden layer n[0]=n_1, ..., m[L-1]=n_L#
-    print(n)
+    print("hidden layer sizes=", n)
     network=fullnetwork(L=L, n=n, activation=Sigmoid())
-    network.output(1)
-    weight=[[1 for i in range(2)] for j in range(3)]
-    print("weight=", np.array(weight))
-    bias=[1 for k in range(3)]                        
-    print("bias=", np.array(bias))
-    addlayer=onelayer(inputvector=np.array([1,2]), activation=Sigmoid(), weight=np.array(weight), bias=np.array(bias))
-    layervector=addlayer.output()
-
-    
+    print("network output=", float(network.output(1)))
