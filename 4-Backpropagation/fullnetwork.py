@@ -13,6 +13,8 @@ parameters L, n_1, ..., n_L are given
 import numpy as np
 from activations import Sigmoid, ReLU, Tanh, Exponential
 
+outputfile = open('fullnetworkoutput_Sigmoid.txt', 'w') 
+
 """
 one layer of the neural network, input vector x^{in}, output \sigma(W x^{in} + b)
 W is weight vector, b is the bias
@@ -31,14 +33,14 @@ class onelayer(object):
         self.bias=bias
         
     def output(self):
-        print("weight*input=", np.dot(self.weight,self.inputvector))
+        print("weight*input=\n",np.dot(self.weight,self.inputvector), file=outputfile)
         preoutput=np.dot(self.weight,self.inputvector)+self.bias
-        print("preoutput=", preoutput)
+        print("preoutput=\n", preoutput, file=outputfile)
         length=preoutput.size
         output=[]
         for i in range(length):
             output.append(self.activation.fn(preoutput[i]))
-        print("output=", np.array(output))
+        print("output=\n", np.array(output), file=outputfile)
         return np.array(output)
     
 
@@ -63,32 +65,32 @@ class fullnetwork(object):
     def output(self, x):
         layervector=np.array(x) #layervector corresponds to the outputs of all neurons at the current layer#
         #the initial layer#
-        print("***********************layer ", 0, "***********************")
-        print("layervector=", layervector)
+        print("***********************layer ", 0, "***********************", file=outputfile)
+        print("layervector=\n", layervector, file=outputfile)
         weight=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[0])]
-        print("weight=", np.array(weight))
+        print("weight=\n", np.array(weight), file=outputfile)
         bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[0])]                        
-        print("bias=", np.array(bias))
+        print("bias=\n", np.array(bias), file=outputfile)
         addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
         layervector=addlayer.output()
         
         for l in range(self.L):
-            print("***********************layer ", l+1, "***********************")
-            print("layervector=", layervector)
+            print("***********************layer ", l+1, "***********************", file=outputfile)
+            print("layervector=\n", layervector, file=outputfile)
             if l==self.L-1:
                 #the last layer#
                 weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l])) for i in range(self.n[l])] for j in range(1)]
-                print("weight=", np.array(weight))
+                print("weight=\n", np.array(weight), file=outputfile)
                 bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(1)]                        
-                print("bias=", np.array(bias))
+                print("bias=\n", np.array(bias), file=outputfile)
                 addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
                 layervector=addlayer.output()
             else:
                 #all hidden layers except the last layer#
                 weight=[[np.random.normal(loc=0.0, scale=1/np.sqrt(self.n[l])) for i in range(self.n[l])] for j in range(self.n[l+1])]
-                print("weight=", np.array(weight))
+                print("weight=\n", np.array(weight), file=outputfile)
                 bias=[[np.random.normal(loc=0.0, scale=1.0) for i in range(1)] for j in range(self.n[l+1])]                        
-                print("bias=", np.array(bias))
+                print("bias=\n", np.array(bias), file=outputfile)
                 addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight), bias=np.array(bias))
                 layervector=addlayer.output()
         return layervector
@@ -99,8 +101,11 @@ class fullnetwork(object):
 test the output
 """
 if __name__ == "__main__":
-    L=5 #number of hidden layers#
-    n=np.random.randint(1, 6, size=L) #network size for each hidden layer n[0]=n_1, ..., m[L-1]=n_L#
-    print("hidden layer sizes=", n)
+    L=10 #number of hidden layers#
+    n=np.random.randint(1, 10, size=L) #network size for each hidden layer n[0]=n_1, ..., m[L-1]=n_L#
+    print("hidden layer sizes=", n, file=outputfile)
     network=fullnetwork(L=L, n=n, activation=Sigmoid())
-    print("network output=", float(network.output(1)))
+    print("\nnetwork output=", float(network.output(1)), file=outputfile)
+
+
+    outputfile.close() 
