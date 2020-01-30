@@ -82,21 +82,13 @@ class fullnetwork(object):
     
     def output(self, x, weight, bias):
         layervector=np.array(x) #layervector corresponds to the outputs of all neurons at the current layer#
-        #the initial layer#
-        print("***********************layer ", 0, "***********************", file=outputfile)
-        print("layervector=\n", layervector, file=outputfile)
-        print("weight=\n", np.array(weight[0]), file=outputfile)
-        print("bias=\n", np.array(bias[0]), file=outputfile)
-        addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight[0]), bias=np.array(bias[0]))
-        layervector=addlayer.output()
-        
-        for l in range(self.L):
-            #all layers including the last layer#
-            print("***********************layer ", l+1, "***********************", file=outputfile)
+        for l in range(self.L+1):
+            #all layers including the initial and the last layer#
+            print("***********************layer ", l, "***********************", file=outputfile)
             print("layervector=\n", layervector, file=outputfile)
-            print("weight=\n", np.array(weight[l+1]), file=outputfile)
-            print("bias=\n", np.array(bias[l+1]), file=outputfile)
-            addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight[l+1]), bias=np.array(bias[l+1]))
+            print("weight=\n", np.array(weight[l]), file=outputfile)
+            print("bias=\n", np.array(bias[l]), file=outputfile)
+            addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight[l]), bias=np.array(bias[l]))
             layervector=addlayer.output()
         return layervector
     
@@ -106,7 +98,7 @@ class fullnetwork(object):
 test the output
 """
 if __name__ == "__main__":
-    L=100 #number of hidden layers#
+    L=10 #number of hidden layers#
     n=np.random.randint(1, 10, size=L) #network size for each hidden layer n[0]=n_1, ..., m[L-1]=n_L#
     print("hidden layer sizes=", n, file=outputfile)
     network=fullnetwork(L=L, n=n, activation=ReLU())
