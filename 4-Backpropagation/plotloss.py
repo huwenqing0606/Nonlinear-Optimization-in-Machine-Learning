@@ -7,13 +7,10 @@ Created on Thu Jan 30 13:54:10 2020
 
 import numpy as np
 import matplotlib.pyplot as plt
-import random
 
 from activations import Sigmoid, ReLU, Tanh, Exponential
 from fullnetwork import onelayer, fullnetwork
-from mpl_toolkits.mplot3d import Axes3D
-
-outputfile = open('fullnetworkoutput_ReLU.txt', 'w') 
+from mpl_toolkits.mplot3d import Axes3D 
 
 
 #number of hidden layers#
@@ -25,7 +22,7 @@ training_size=1
 #(N, N) meshgrid#
 N=100
 #activation function#
-sigma=Sigmoid() 
+sigma=ReLU() 
 
 #set the network#
 network=fullnetwork(L=L, n=n, activation=sigma)
