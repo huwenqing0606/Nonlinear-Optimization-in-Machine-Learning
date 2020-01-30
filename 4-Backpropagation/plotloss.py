@@ -76,4 +76,3 @@ def plot_network_loss():
 
 if __name__ == "__main__":
     plot_network_loss()
-    outputfile.close() 
