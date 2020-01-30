@@ -25,7 +25,7 @@ training_size=1
 #(N, N) meshgrid#
 N=100
 #activation function#
-sigma=ReLU() 
+sigma=Sigmoid() 
 
 #set the network#
 network=fullnetwork(L=L, n=n, activation=sigma)
