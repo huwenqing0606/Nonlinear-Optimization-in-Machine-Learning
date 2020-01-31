@@ -6,6 +6,7 @@ class Sigmoid(object):
         A logistic sigmoid activation function.
         """
         super().__init__()
+        self.name="Sigmoid"
 
     def fn(self, z):
         """
@@ -67,6 +68,7 @@ class ReLU(object):
 
     def __init__(self):
         super().__init__()
+        self.name="ReLU"
 
     def __str__(self):
         return "ReLU"
@@ -112,6 +114,7 @@ class Tanh(object):
         A hyperbolic tangent activation function.
         """
         super().__init__()
+        self.name="Tanh"
 
     def __str__(self):
         return "Tanh"
@@ -153,6 +156,7 @@ class Exponential(object):
         An exponential (base e) activation function.
         """
         super().__init__()
+        self.name="Exponential"
 
     def __str__(self):
         return "Exponential"
@@ -182,31 +186,3 @@ class Exponential(object):
             \\frac{\partial^2 \\text{Exponential}}{\partial x_i^2}  =  e^{x_i}
         """
         return np.exp(x)
-
-
-
-
-
-if __name__ == "__main__":
-    
-    import matplotlib.pyplot as plt
-    
-    dic={'Sigmoid': Sigmoid, 'ReLU': ReLU, 'Tanh': Tanh, 'Exponential': Exponential}
-    namelist=['Sigmoid', 'ReLU', 'Tanh', 'Exponential']
-    for name in namelist:
-        X = np.linspace(-5, 5, 100)
-        Y = []
-        Ygrad=[]
-        Ygrad2=[]
-        for i in range(100):
-            Y.append(dic[name].fn(dic[name], X[i]))
-            Ygrad.append(dic[name].grad(dic[name], X[i]))
-            Ygrad2.append(dic[name].grad2(dic[name], X[i]))
-            
-        plt.plot(X, Y, label=r"$y$")
-        plt.plot(X, Ygrad, label=r"$\frac{dy}{dx}$")
-        plt.plot(X, Ygrad2, label=r"$\frac{d^2 y}{dx^2}$")
-
-        plt.xlabel('x')
-        plt.ylabel('y='+name+'(x)')
-        plt.show()
