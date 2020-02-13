@@ -15,11 +15,11 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
 
 #number of hidden layers#
-L=2
+L=3
 #network size for each hidden layer n[0]=n_1, ..., n[L-1]=n_L#
 n=np.random.randint(1, 5, size=L)
 #activation function#
-sigma=Tanh() 
+sigma=Sigmoid() 
 #number of iterations#
 N=100
 
@@ -103,4 +103,6 @@ if __name__ == "__main__":
     anim = animation.FuncAnimation(fig, anmi, init_func=init,
                                    frames=N, interval=100, blit=False,repeat=False)
     
-    anim.save('GDtrajectory'+'_n='+str(n)+'_activation='+str(sigma.name)+'.gif', writer='imagemagick')
+    anim.save('GDtrajectory'+'_n='+str(n)+'_activation='+str(sigma.name)+'_layer'+
+              str(weightindex_startlayer)+'_neuron'+str(weightindex_neuron_startlayer[0])+str(weightindex_neuron_nextlayer[0])
+              +'_neuron'+str(weightindex_neuron_startlayer[1])+str(weightindex_neuron_nextlayer[1])+'.gif', writer='imagemagick')
