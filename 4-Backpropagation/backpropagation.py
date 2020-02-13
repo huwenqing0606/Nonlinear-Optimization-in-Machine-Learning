@@ -39,10 +39,10 @@ class backpropagation(object):
             delta.append(np.zeros(shape=[self.n[i],1]))
         delta.append(np.zeros(shape=[1,1]))
         #the last (output) layer delta#
-        delta[L+1-1]=np.dot(self.activation.grad(self.preoutputsequence[L+1-1]), outputsequence[L+1-1]-np.array(y))
+        delta[self.L+1-1]=np.dot(self.activation.grad(self.preoutputsequence[self.L+1-1]), self.outputsequence[self.L+1-1]-np.array(y))
         #backpropagation: from the last layer to the first hidden layer calculate all the error functions#
         for i in reversed(range(self.L)):
-            vector1=np.dot(weight[i+1].T, delta[i+1])
+            vector1=np.dot(self.weight[i+1].T, delta[i+1])
             vector2=[]
             for index in range(self.n[i]):
                 vector2.append(self.activation.grad(self.preoutputsequence[i][index][0]))
@@ -63,17 +63,17 @@ class backpropagation(object):
                 #initial layer#
                 for j in range(self.n[i]):
                     for k in range(1):
-                        gradweight[i][j][k]=delta[i][j]*outputsequence[i-1][k]
+                        gradweight[i][j][k]=delta[i][j]*self.outputsequence[i-1][k]
             elif i==self.L:
                 #last layer#
                 for j in range(1):
                     for k in range(self.n[i-1]):
-                        gradweight[i][j][k]=delta[i][j]*outputsequence[i-1][k]
+                        gradweight[i][j][k]=delta[i][j]*self.outputsequence[i-1][k]
             else:
                 #all hidden layers#
                 for j in range(self.n[i]):
                     for k in range(self.n[i-1]):
-                        gradweight[i][j][k]=delta[i][j]*outputsequence[i-1][k]
+                        gradweight[i][j][k]=delta[i][j]*self.outputsequence[i-1][k]
         return gradweight, gradbias
         
 
