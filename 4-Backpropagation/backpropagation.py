@@ -6,8 +6,6 @@ Created on Wed Feb 12 15:09:26 2020
 """
 
 import numpy as np
-import matplotlib.pyplot as plt
-
 from activations import Sigmoid, ReLU, Tanh, Exponential
 from fullnetwork import onelayer, fullnetwork
 
@@ -50,30 +48,27 @@ class backpropagation(object):
             delta[i]=vector1*vector2
         return delta
         
-    def grad(self, delta):
+    def grad(self, x, delta):
         #calculation of the gradient of the quadratic loss with respect to the weight and bias parameters#
-        gradweight=self.weight
-        gradbias=self.bias
         #the gardients with respect to the biases are the error vectors#
+        gradbias=[]
         for i in range(self.L+1):
-            gradbias[i]=delta[i]
+            gradbias.append(delta[i])        
+
         #calculate the gradients with respect to the weight vectors#
-        for i in range(self.L+1):
-            if i==0: 
-                #initial layer#
-                for j in range(self.n[i]):
-                    for k in range(1):
-                        gradweight[i][j][k]=delta[i][j]*self.outputsequence[i-1][k]
-            elif i==self.L:
-                #last layer#
-                for j in range(1):
-                    for k in range(self.n[i-1]):
-                        gradweight[i][j][k]=delta[i][j]*self.outputsequence[i-1][k]
+        #initialize the gradient with respect to the weights, this will be an array of the same size as the weights#
+        gradweight=[]
+        #the initial layer#
+        gradweight.append(np.array([[float(delta[0][j])*float(x) for k in range(1)] for j in range(self.n[0])]))
+        for l in range(self.L):
+            #layer index is l+1#
+            if l==self.L-1:
+                #the last layer#
+                gradweight.append(np.array([[float(delta[l+1][j])*float(self.outputsequence[l][k]) for k in range(self.n[l])] for j in range(1)]))
             else:
-                #all hidden layers#
-                for j in range(self.n[i]):
-                    for k in range(self.n[i-1]):
-                        gradweight[i][j][k]=delta[i][j]*self.outputsequence[i-1][k]
+                #all hidden layers except the last layer#
+                gradweight.append(np.array([[float(delta[l+1][j])*float(self.outputsequence[l][k]) for k in range(self.n[l])] for j in range(self.n[l+1])]))
+
         return gradweight, gradbias
         
 
@@ -81,7 +76,7 @@ if __name__ == "__main__":
     #number of hidden layers#
     L=3
     #network size for each hidden layer n[0]=n_1, ..., n[L-1]=n_L#
-    n=np.random.randint(1, 3, size=L)
+    n=np.random.randint(1, 5, size=L)
     #activation function#
     sigma=Sigmoid() 
     #set the network#
@@ -101,7 +96,9 @@ if __name__ == "__main__":
                              outputsequence=outputsequence, 
                              preoutputsequence=preoutputsequence)
     delta=backprop.error(y)
-    gradweight, gradbias=backprop.grad(delta)
+    gradweight, gradbias=backprop.grad(x, delta)
+    print("weight=", weight)
+    print("bias=", bias)    
     print("n=", n)
     print("delta=", delta)
     print("gradweight=", gradweight)

@@ -13,7 +13,7 @@ parameters L, n_1, ..., n_L are given
 import numpy as np
 from activations import Sigmoid, ReLU, Tanh, Exponential
 
-outputfile = open('fullnetworkoutput.txt', 'w') 
+outputfile=open('fullnetworkoutput.txt', 'w') 
 
 """
 one layer of the neural network, input vector x^{in}, output \sigma(W x^{in} + b)

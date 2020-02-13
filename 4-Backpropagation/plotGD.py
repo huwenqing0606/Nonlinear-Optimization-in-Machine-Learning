@@ -15,11 +15,13 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
 
 #number of hidden layers#
-L=3
+L=2
 #network size for each hidden layer n[0]=n_1, ..., n[L-1]=n_L#
-n=np.random.randint(1, 3, size=L)
+n=np.random.randint(1, 5, size=L)
 #activation function#
 sigma=Tanh() 
+#number of iterations#
+N=100
 
 #set the network#
 network=fullnetwork(L=L, n=n, activation=sigma)
@@ -46,13 +48,13 @@ def plot_gd_trajectory(w1_init, w2_init, learningrate):
     Loss=[]
     w_1=[]
     w_2=[]
-    w_1.append(w1_init)
-    w_2.append(w2_init)
+    w_1.append(float(w1_init))
+    w_2.append(float(w2_init))
     weight[weightindex_startlayer][weightindex_neuron_nextlayer[0]-1][weightindex_neuron_startlayer[0]-1]=w1_init
     weight[weightindex_startlayer][weightindex_neuron_nextlayer[1]-1][weightindex_neuron_startlayer[1]-1]=w2_init
     networkoutput, outputsequence, preoutputsequence=network.output(float(x), weight, bias)
     Loss.append(float(0.5*(y-float(networkoutput))**2))
-    for i in range(100):
+    for i in range(N):
         #calculate the gradient with respect to current weight and bias#
         backprop=backpropagation(L=L, 
                                  n=n, 
@@ -62,7 +64,7 @@ def plot_gd_trajectory(w1_init, w2_init, learningrate):
                                  outputsequence=outputsequence, 
                                  preoutputsequence=preoutputsequence)
         delta=backprop.error(y)
-        gradweight, gradbias=backprop.grad(delta)
+        gradweight, gradbias=backprop.grad(x, delta)
         #update the weights and the loss values#
         weight[weightindex_startlayer][weightindex_neuron_nextlayer[0]-1][weightindex_neuron_startlayer[0]-1]=w_1[i]-learningrate*gradweight[weightindex_startlayer][weightindex_neuron_nextlayer[0]-1][weightindex_neuron_startlayer[0]-1]
         weight[weightindex_startlayer][weightindex_neuron_nextlayer[1]-1][weightindex_neuron_startlayer[1]-1]=w_2[i]-learningrate*gradweight[weightindex_startlayer][weightindex_neuron_nextlayer[1]-1][weightindex_neuron_startlayer[1]-1]
@@ -75,9 +77,9 @@ def plot_gd_trajectory(w1_init, w2_init, learningrate):
 
 
 if __name__ == "__main__":
-    w1_init=1 
-    w2_init=1
-    learningrate=0.001
+    w1_init=np.random.normal(0,1,1)
+    w2_init=np.random.normal(0,1,1)
+    learningrate=1
     w_1, w_2, Loss=plot_gd_trajectory(w1_init, w2_init, learningrate)
     print("w1=", w_1)
     print("w2=", w_2)
@@ -99,6 +101,6 @@ if __name__ == "__main__":
         point = ax.plot(w_1[i-1:i], w_2[i-1:i], Loss[i-1:i],'bo', markersize=10)
         return line,point
     anim = animation.FuncAnimation(fig, anmi, init_func=init,
-                                   frames=100, interval=10, blit=False,repeat=False)
+                                   frames=N, interval=100, blit=False,repeat=False)
     
-    anim.save('GDtrajectory.gif', writer='imagemagick')
+    anim.save('GDtrajectory'+'_n='+str(n)+'_activation='+str(sigma.name)+'.gif', writer='imagemagick')
