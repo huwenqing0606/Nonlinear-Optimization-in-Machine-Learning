@@ -77,7 +77,7 @@ def plot_gd_trajectory(w1_init, w2_init, learningrate):
 if __name__ == "__main__":
     w1_init=1 
     w2_init=1
-    learningrate=0.01
+    learningrate=0.001
     w_1, w_2, Loss=plot_gd_trajectory(w1_init, w2_init, learningrate)
     print("w1=", w_1)
     print("w2=", w_2)
@@ -99,6 +99,6 @@ if __name__ == "__main__":
         point = ax.plot(w_1[i-1:i], w_2[i-1:i], Loss[i-1:i],'bo', markersize=10)
         return line,point
     anim = animation.FuncAnimation(fig, anmi, init_func=init,
-                                   frames=1000, interval=10, blit=False,repeat=False)
+                                   frames=100, interval=10, blit=False,repeat=False)
     
     anim.save('GDtrajectory.gif', writer='imagemagick')

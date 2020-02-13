@@ -26,7 +26,7 @@ class Sigmoid(object):
 
             \\frac{\partial \sigma}{\partial x_i} = \sigma(x_i) (1 - \sigma(x_i))
         """
-        fn_x = self.fn(self, x)
+        fn_x = self.fn(x)
         return fn_x * (1 - fn_x)
 
     def grad2(self, x):

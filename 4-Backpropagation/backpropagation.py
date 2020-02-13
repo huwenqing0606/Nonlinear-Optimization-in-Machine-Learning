@@ -83,7 +83,7 @@ if __name__ == "__main__":
     #network size for each hidden layer n[0]=n_1, ..., n[L-1]=n_L#
     n=np.random.randint(1, 3, size=L)
     #activation function#
-    sigma=ReLU() 
+    sigma=Sigmoid() 
     #set the network#
     network=fullnetwork(L=L, n=n, activation=sigma)
     #set the initial weight and bias#
