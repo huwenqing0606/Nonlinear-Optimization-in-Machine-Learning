@@ -32,6 +32,10 @@ class onelayer(object):
         self.weight=weight
         self.bias=bias
         
+    def preoutput(self):
+        preoutput=np.dot(self.weight,self.inputvector)+self.bias
+        return np.array(preoutput)
+        
     def output(self):
         print("weight*input=\n",np.dot(self.weight,self.inputvector), file=outputfile)
         preoutput=np.dot(self.weight,self.inputvector)+self.bias
@@ -82,6 +86,8 @@ class fullnetwork(object):
     
     def output(self, x, weight, bias):
         layervector=np.array(x) #layervector corresponds to the outputs of all neurons at the current layer#
+        outputsequence=[]
+        preoutputsequence=[]
         for l in range(self.L+1):
             #all layers including the initial and the last layer#
             print("***********************layer ", l, "***********************", file=outputfile)
@@ -89,8 +95,11 @@ class fullnetwork(object):
             print("weight=\n", np.array(weight[l]), file=outputfile)
             print("bias=\n", np.array(bias[l]), file=outputfile)
             addlayer=onelayer(inputvector=layervector, activation=self.activation, weight=np.array(weight[l]), bias=np.array(bias[l]))
+            preoutput=addlayer.preoutput()
+            preoutputsequence.append(preoutput)
             layervector=addlayer.output()
-        return layervector
+            outputsequence.append(layervector)
+        return layervector, outputsequence, preoutputsequence
     
     
 
@@ -98,11 +107,14 @@ class fullnetwork(object):
 test the output
 """
 if __name__ == "__main__":
-    L=10 #number of hidden layers#
-    n=np.random.randint(1, 10, size=L) #network size for each hidden layer n[0]=n_1, ..., m[L-1]=n_L#
+    L=3 #number of hidden layers#
+    n=np.random.randint(1,5, size=L) #network size for each hidden layer n[0]=n_1, ..., m[L-1]=n_L#
     print("hidden layer sizes=", n, file=outputfile)
     network=fullnetwork(L=L, n=n, activation=ReLU())
     weight, bias=network.setparameter()
-    print("\nnetwork output=", float(network.output(1, weight, bias)), file=outputfile)
+    networkoutput, outputsequence, preoutputsequence=network.output(1, weight, bias)
+    print("\nnetwork output=", float(networkoutput), file=outputfile)
+    print("outputsequence=", outputsequence, file=outputfile)
+    print("preoutoputsequence=", preoutputsequence, file=outputfile)
     
     outputfile.close() 

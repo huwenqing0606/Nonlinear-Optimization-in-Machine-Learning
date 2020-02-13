@@ -20,9 +20,9 @@ n=np.random.randint(1, 10, size=L)
 #training set size#     
 training_size=1 
 #(N, N) meshgrid#
-N=100
+N=3
 #activation function#
-sigma=ReLU() 
+sigma=Tanh() 
 
 #set the network#
 network=fullnetwork(L=L, n=n, activation=sigma)
@@ -61,7 +61,8 @@ def plot_network_loss():
             #calculate the mean square error produced by the weight parameters at (a_1[i], a_2[j])#
             Z=[]
             for m in range(training_size):
-                Z.append((Y[m]-float(network.output(float(X[m]), weight, bias)))**2)                
+                networkoutput, outputsequence, preoutputsequence=network.output(float(X[m]), weight, bias)
+                Z.append((Y[m]-float(networkoutput))**2)                
             Loss[i][j]=0.5*np.mean(np.array(Z))
     return a_1, a_2, Loss                          
 
