@@ -12,7 +12,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 A=1
-B=1000
+B=10000
 epsilon=0.1
 
 """
@@ -173,7 +173,7 @@ if __name__ == "__main__":
     plt.xlabel('iteration')
     plt.ylabel('loss')
     plt.title('function loss for GD (red, solid) and Nesterov (blue, dashed)')
-    plt.savefig('loss_GDvsNesterov.png')
+    plt.savefig('loss_GDvsNesterov_A='+str(A)+'_B='+str(B)+'_alpha='+str(alpha)+'_beta='+str(beta)+'_eps='+str(epsilon)+'.jpg')
     plt.show()  
 
     plt.figure(figsize = (14,10))
@@ -182,5 +182,5 @@ if __name__ == "__main__":
     plt.xlabel('iteration')
     plt.ylabel('distance to zero')
     plt.title('distance to zero for GD (red, solid) and Nesterov (blue, dashed)')
-    plt.savefig('distance0_GDvsNesterov.png')
+    plt.savefig('distance0_GDvsNesterov_A='+str(A)+'_B='+str(B)+'_alpha='+str(alpha)+'_beta='+str(beta)+'_eps='+str(epsilon)+'.jpg')
     plt.show()  
