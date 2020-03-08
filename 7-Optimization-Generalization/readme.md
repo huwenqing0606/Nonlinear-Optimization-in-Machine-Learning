@@ -2,7 +2,7 @@
 
 7. Optimization and Generalization
 
-Use the following different tensorflow optimizers to train the MINIST dataset
+Use the following different tensorflow optimizers to train the MNIST dataset
 
 (1) class AdadeltaOptimizer: Optimizer that implements the Adadelta algorithm.
 
