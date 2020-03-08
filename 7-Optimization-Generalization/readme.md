@@ -5,10 +5,15 @@
 Use the following different tensorflow optimizers to train the MINIST dataset
 
 (1) class AdadeltaOptimizer: Optimizer that implements the Adadelta algorithm.
+
 (2) class AdagradOptimizer: Optimizer that implements the Adagrad algorithm.
+
 (3) class AdamOptimizer: Optimizer that implements the Adam algorithm.
+
 (4) class MomentumOptimizer: Optimizer that implements the Momentum algorithm.
+
 (5) class GradientDescentOptimizer: Optimizer that implements the gradient descent algorithm.
+
 (6) class RMSPropOptimizer: Optimizer that implements the RMSProp algorithm.
 
 The network structure can be built from keras API in tensorflow: choose a small network. Then compare the training and test errors/accuracy as a function of the training epoches. Test different learning rates and batch sizes.
