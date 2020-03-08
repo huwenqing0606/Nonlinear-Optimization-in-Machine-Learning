@@ -99,7 +99,7 @@ plt.title('Training accuracy')
 plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['SGD', 'Nesterov', 'Adagrad'], loc='lower right')
-plt.savefig('test_accuracy.jpg')
+plt.savefig('training_accuracy.jpg')
 plt.show()
 
 #plot and compare the accuracies of validation set
@@ -111,5 +111,27 @@ plt.ylabel('Accuracy')
 plt.xlabel('Epoch')
 plt.legend(['SGD', 'Nesterov', 'Adagrad'], loc='lower right')
 plt.savefig('test_accuracy.jpg')
+plt.show()
+
+#plot and compare the loss of training set
+plt.plot(trainloss_SGD)
+plt.plot(trainloss_Nesterov)
+plt.plot(trainloss_Adagrad)
+plt.title('Training Loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['SGD', 'Nesterov', 'Adagrad'], loc='upper right')
+plt.savefig('train_loss.jpg')
+plt.show()
+
+#plot and compare the accuracies of validation set
+plt.plot(testloss_SGD)
+plt.plot(testloss_Nesterov)
+plt.plot(testloss_Adagrad)
+plt.title('Test loss')
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(['SGD', 'Nesterov', 'Adagrad'], loc='upper right')
+plt.savefig('test_loss.jpg')
 plt.show()
 
