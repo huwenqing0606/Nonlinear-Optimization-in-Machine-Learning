@@ -10,7 +10,7 @@ Use the following different tensorflow optimizers to train the MNIST dataset
 
 (3) class AdamOptimizer: Optimizer that implements the Adam algorithm.
 
-(4) class MomentumOptimizer: Optimizer that implements the Momentum algorithm.
+(4) class MomentumOptimizer: Optimizer that implements the SGD/Momentum algorithm.
 
 (5) class GradientDescentOptimizer: Optimizer that implements the gradient descent algorithm.
 
