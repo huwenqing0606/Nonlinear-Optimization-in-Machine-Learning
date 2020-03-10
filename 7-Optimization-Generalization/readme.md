@@ -16,4 +16,4 @@ Use the following different tensorflow optimizers to train the MNIST dataset
 
 (6) class RMSPropOptimizer: Optimizer that implements the RMSProp algorithm.
 
-The network structure can be built from keras API in tensorflow: choose a small network. Then compare the training and test errors/accuracy as a function of the training epoches. Experiment on different learning rates and batch sizes.
+The network structure can be built from keras API in tensorflow: you can choose a relatively simple small network. Then compare the training and test errors/accuracy as a function of the training epoches. Experiment on different learning rates and batch sizes.
