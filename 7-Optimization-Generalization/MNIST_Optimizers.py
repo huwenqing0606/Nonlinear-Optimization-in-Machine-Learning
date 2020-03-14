@@ -1,3 +1,4 @@
+
 """
 MNIST dataset trained on a small network, different optimizers
 """
@@ -11,7 +12,7 @@ mnist = tf.keras.datasets.mnist
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
 #set the number of epochs and the batch size
-num_epochs=3
+num_epochs=100
 
 #set the learning rate and batch size#
 learning_rate=0.1
@@ -80,8 +81,8 @@ for optimizer_name in optimizer_name_set:
     testloss_set.append(testloss)
 
 #compare on same learning rate and batchsize but different optimizers
+
 #plot and compare the loss over training set
-#set the learning rate and batch size#
 index=0
 for optimizer_name in optimizer_name_set:
     trainloss_result=[]
@@ -94,4 +95,49 @@ plt.ylabel('Loss')
 plt.xlabel('Epoch')
 plt.legend(optimizer_name_set, loc='upper right')
 plt.savefig('training_loss_lr='+str(learning_rate)+'_bs='+str(batch_size)+'.jpg')
+plt.show()
+
+#plot and compare the loss over test set
+index=0
+for optimizer_name in optimizer_name_set:
+    testloss_result=[]
+    testloss_result=testloss_set[index][1]
+    plt.plot(testloss_result)
+    index=index+1
+
+plt.title('Testing Loss_lr='+str(learning_rate)+'_bs='+str(batch_size))
+plt.ylabel('Loss')
+plt.xlabel('Epoch')
+plt.legend(optimizer_name_set, loc='upper right')
+plt.savefig('test_loss_lr='+str(learning_rate)+'_bs='+str(batch_size)+'.jpg')
+plt.show()
+
+#plot and compare the accuracy over training set
+index=0
+for optimizer_name in optimizer_name_set:
+    trainacc_result=[]
+    trainacc_result=trainacc_set[index][1]
+    plt.plot(trainacc_result)
+    index=index+1
+
+plt.title('Training Accuracy_lr='+str(learning_rate)+'_bs='+str(batch_size))
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(optimizer_name_set, loc='lower right')
+plt.savefig('training_accuracy_lr='+str(learning_rate)+'_bs='+str(batch_size)+'.jpg')
+plt.show()
+
+#plot and compare the accuracy over test set
+index=0
+for optimizer_name in optimizer_name_set:
+    testacc_result=[]
+    testacc_result=testacc_set[index][1]
+    plt.plot(testacc_result)
+    index=index+1
+
+plt.title('Testing Accuracy_lr='+str(learning_rate)+'_bs='+str(batch_size))
+plt.ylabel('Accuracy')
+plt.xlabel('Epoch')
+plt.legend(optimizer_name_set, loc='lower right')
+plt.savefig('test_accuracy_lr='+str(learning_rate)+'_bs='+str(batch_size)+'.jpg')
 plt.show()
