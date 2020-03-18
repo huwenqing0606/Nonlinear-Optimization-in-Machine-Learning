@@ -19,8 +19,9 @@ learning_rate=0.1
 batch_size=64
 
 #set the choices of optimizers#
-optimizer_name_set=["SGD", "Nesterov", "Adadelta", "Adagrad", "Adam", "RMSprop"]
-optimizer_set={"SGD": tf.keras.optimizers.SGD(learning_rate=learning_rate, momentum=0.0, nesterov=False), 
+optimizer_name_set=["GD", "SGD", "Nesterov", "Adadelta", "Adagrad", "Adam", "RMSprop"]
+optimizer_set={"GD": tf.keras.optimizers.SGD(learning_rate=learning_rate, momentum=0.0, nesterov=False),
+               "SGD": tf.keras.optimizers.SGD(learning_rate=learning_rate, momentum=0.0, nesterov=False), 
                "Nesterov": tf.keras.optimizers.SGD(learning_rate=learning_rate, momentum=0.1, nesterov=True),
                "Adadelta": tf.keras.optimizers.Adadelta(learning_rate=learning_rate, rho=0.95, epsilon=1e-07),
                "Adagrad": tf.keras.optimizers.Adagrad(learning_rate=learning_rate, initial_accumulator_value=0.1, epsilon=1e-07),
@@ -51,13 +52,22 @@ for optimizer_name in optimizer_name_set:
                   metrics=['accuracy'])
 
     #train and fit the model, then validate
-    print("\n********************* Optimizer="+str(optimizer_name)+", batchsize="+str(batch_size)+", learningrate="+str(learning_rate)+" *********************")
-    history = model.fit(x_train, 
-                        y_train, 
-                        epochs=num_epochs, 
-                        batch_size=batch_size, 
-                        verbose=2,
-                        validation_data=(x_test, y_test))
+    if optimizer_name=="GD":
+        print("\n********************* Optimizer="+str(optimizer_name)+", learningrate="+str(learning_rate)+" *********************")
+        history = model.fit(x_train, 
+                            y_train, 
+                            epochs=num_epochs, 
+                            batch_size=60000, 
+                            verbose=2,
+                            validation_data=(x_test, y_test))
+    else:
+        print("\n********************* Optimizer="+str(optimizer_name)+", batchsize="+str(batch_size)+", learningrate="+str(learning_rate)+" *********************")
+        history = model.fit(x_train, 
+                            y_train, 
+                            epochs=num_epochs, 
+                            batch_size=batch_size, 
+                            verbose=2,
+                            validation_data=(x_test, y_test))
 
     trainacc=[]
     trainacc.append([optimizer_name])
