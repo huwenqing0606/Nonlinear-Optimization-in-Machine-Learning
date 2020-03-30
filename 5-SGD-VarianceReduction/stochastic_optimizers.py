@@ -19,12 +19,15 @@ from random import sample
 import tensorflow as tf
 tf.enable_eager_execution()
 
-
+#set the parameters A, B for the loss function
 A=1
 B=1
+#set the training sample size and the batchsize
 training_sample_size=100
-batchsize=75
+batchsize=1
+#set number of iteration steps
 num_steps=1000
+#set the learning rate
 lr=0.01
 
 """
@@ -71,10 +74,19 @@ class stochastic_optimizer(object):
         self.function=function
         
     def SGD(self, w, training_sample_x, training_sample_y, lr, batchsize):
-        batch_x=sample(list(training_sample_x), batchsize)
-        batch_y=sample(list(training_sample_y), batchsize)
+        #detect the size of the training set
+        trainingsize=len(training_sample_y)
+        #randomly choose the index set that forms the mini-batch
+        batch_index=sample(list(range(0,trainingsize)), batchsize)
+        #from the mini-batch index set select the corresponding training samples (x, y)
+        batch_x=[]
+        batch_y=[]
+        for i in range(batchsize):
+            batch_x.append(training_sample_x[batch_index[i]])
+            batch_y.append(training_sample_y[batch_index[i]])
         batch_x=np.array(batch_x)
         batch_y=np.array(batch_y)
+        #calculate the stochastic gradient updates 
         grad=self.function.average(w, batch_x, batch_y, self.function.grad)
         update=-lr*grad
         return update
@@ -107,11 +119,20 @@ if __name__ == "__main__":
         trajectory_w_1=[]
         trajectory_w_2=[]
         loss_list=[]
+        generalization_error_list=[]
         function=LossFunction()
         for i in range(num_steps):
+            #record the current model weights w 
             trajectory_w_1.append(w_current[0]) 
             trajectory_w_2.append(w_current[1])
+            #calculate the generalization error for the current model weights w
+            test_sample_x=np.random.normal(0,1,size=2)
+            test_sample_y=np.random.normal(0,1,size=1)
+            generalization_error=function.value(w_current, test_sample_x, test_sample_y)
+            generalization_error_list.append(generalization_error)
+            #calculate the training error (loss) for the current model weights w
             loss_list.append(function.average(w_current, training_sample_x, training_sample_y, function.value))
+            #update w via stochastic optimization
             stochastic_optimization=stochastic_optimizer(function=function)
             w=w_current+stochastic_optimization.update(w_current, training_sample_x, training_sample_y, lr, batchsize, optname)
             w_current_minus1=w_current
@@ -135,3 +156,22 @@ if __name__ == "__main__":
         anim = animation.FuncAnimation(fig, anmi, init_func=init,
                                        frames=num_steps, interval=10, blit=False,repeat=False)
         anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.gif', writer='imagemagick')
+
+
+
+        #plot the training error (loss) and the generalization error
+        fig = plt.figure()
+        mpl.rcParams['legend.fontsize'] = 10
+        plt.plot(loss_list)
+        plt.xlabel('iteration')
+        plt.ylabel('loss')
+        plt.title(optname)
+        plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
+        plt.show()
+
+        plt.plot(generalization_error_list)
+        plt.xlabel('iteration')
+        plt.ylabel('generalization error')
+        plt.title(optname)
+        plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
+        plt.show()
