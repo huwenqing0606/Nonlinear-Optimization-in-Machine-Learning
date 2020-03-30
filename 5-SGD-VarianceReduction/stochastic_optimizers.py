@@ -23,7 +23,7 @@ tf.enable_eager_execution()
 A=1
 B=1
 training_sample_size=100
-batchsize=50
+batchsize=75
 num_steps=1000
 lr=0.01
 
@@ -134,4 +134,4 @@ if __name__ == "__main__":
             return line,point
         anim = animation.FuncAnimation(fig, anmi, init_func=init,
                                        frames=num_steps, interval=10, blit=False,repeat=False)
-        anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_training_size='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_steps='+str(num_steps)+'.gif', writer='imagemagick')
+        anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.gif', writer='imagemagick')
