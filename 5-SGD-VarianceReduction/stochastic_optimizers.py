@@ -24,7 +24,7 @@ A=1
 B=1
 #set the training sample size and the batchsize
 training_sample_size=100
-batchsize=1
+batchsize=10
 #set number of iteration steps
 num_steps=1000
 #set the learning rate
@@ -107,11 +107,14 @@ running the code, plot
 (3) the evolution of generalization error.
 """
 if __name__ == "__main__":
-    #generate the training samples (x_i, y_i)#
+    #generate the training samples (x_i, y_i)
     training_sample_x=np.random.normal(0,1,size=(training_sample_size, 2))
     training_sample_y=np.random.normal(0,1,size=training_sample_size)
     #initialize the initial weights
-    w_init=np.random.uniform(-1, 1, size=2)
+    w_init=[1, 1]
+    #pick a particular pair of test sample (x, y) from the given distribution
+    test_sample_x=np.random.normal(0,1,size=2)
+    test_sample_y=np.random.normal(0,1,size=1)
     #optimization step obtain a sequence of losses and weights trajectory
     for optname in {"SGD"}:
         w_current=w_init
@@ -126,8 +129,6 @@ if __name__ == "__main__":
             trajectory_w_1.append(w_current[0]) 
             trajectory_w_2.append(w_current[1])
             #calculate the generalization error for the current model weights w
-            test_sample_x=np.random.normal(0,1,size=2)
-            test_sample_y=np.random.normal(0,1,size=1)
             generalization_error=function.value(w_current, test_sample_x, test_sample_y)
             generalization_error_list.append(generalization_error)
             #calculate the training error (loss) for the current model weights w
