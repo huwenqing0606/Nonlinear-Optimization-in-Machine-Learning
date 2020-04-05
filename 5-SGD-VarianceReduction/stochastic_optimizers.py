@@ -25,10 +25,10 @@ B=1
 #set the training sample size and the batchsize
 training_sample_size=100
 batchsize=1
-#set number of iteration steps
+#for SGD, set the number of iteration steps
 num_steps=1
 #for SVRG, set the number of epochs and epochlength (m)
-num_epochs=100
+num_epochs=1000
 epochlength=10
 #set the learning rate
 lr=0.01
@@ -147,7 +147,7 @@ class stochastic_optimizer(object):
         update = -lr*grad
         return update
     
-    #the SVRG optimizer, iterates a certain number of epochs, with each epoch under a cetain length, to get the updated weights
+    #the SVRG optimizer, iterates a certain number of epochs, with each epoch under a cetain length (epochlength=m), to get the updated weights
     def SVRG_optimizer(self, w_init, epochs, epochlength, lr):
         w_checkpoint=w_init
         trajectory_w=[]
@@ -207,12 +207,14 @@ if __name__ == "__main__":
             trajectory_w, loss_list, generalization_error_list=optimizer.SGD_optimizer(w_init, num_steps, lr, batchsize)
         elif optname=="SVRG":
             trajectory_w, loss_list, generalization_error_list=optimizer.SVRG_optimizer(w_init, num_epochs, epochlength, lr)
-            print(trajectory_w)
         else:
             print(0)
 
 
-
+        print("weight trajectory=", trajectory_w)
+        print("loss=", loss_list)
+        print("generalization error=", generalization_error_list)
+        
         #plot the trajctory as an animation
         trajectory_w_1=[]
         trajectory_w_2=[]
