@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 import matplotlib as mpl
 from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
-from random import sample
+from random import sample, choice
 
 import tensorflow as tf
 tf.enable_eager_execution()
@@ -23,10 +23,13 @@ tf.enable_eager_execution()
 A=1
 B=1
 #set the training sample size and the batchsize
-training_sample_size=10
+training_sample_size=100
 batchsize=1
 #set number of iteration steps
-num_steps=100
+num_steps=1
+#for SVRG, set the number of epochs and epochlength (m)
+num_epochs=100
+epochlength=10
 #set the learning rate
 lr=0.01
 
@@ -136,13 +139,39 @@ class stochastic_optimizer(object):
         grad_checkpoint=self.function.average(w_checkpoint, self.training_sample_x, self.training_sample_y, self.function.grad)
         #sample one random index from the set [0,...,training_size-1]
         trainingsize=size(self.training_sample_x, self.training_sample_y)
-        index=sample(list(range(0,trainingsize)))
+        index=choice(list(range(0,trainingsize)))
         #return the variance-reduced stochastic gradient
-        grad_1=self.function.grad(w, self.training_sample_x[index], self.training_sample_y[index])
-        grad_2=self.function.grad(w_checkpoint, self.training_sample_x[index], self.training_sample_y[index])
-        grad=grad_1-grad_2+grad_checkpoint
-        update=-lr*grad
+        grad_1 = self.function.grad(w, self.training_sample_x[index], self.training_sample_y[index])
+        grad_2 = self.function.grad(w_checkpoint, self.training_sample_x[index], self.training_sample_y[index])
+        grad = grad_1 - grad_2 + grad_checkpoint
+        update = -lr*grad
         return update
+    
+    #the SVRG optimizer, iterates a certain number of epochs, with each epoch under a cetain length, to get the updated weights
+    def SVRG_optimizer(self, w_init, epochs, epochlength, lr):
+        w_checkpoint=w_init
+        trajectory_w=[]
+        loss_list=[]
+        generalization_error_list=[]
+        for s in range(epochs):
+            #record the current model weights w 
+            trajectory_w.append(w_checkpoint) 
+            #calculate the generalization error for the current model weights w
+            generalization_error=self.function.value(w_checkpoint, self.test_sample_x, self.test_sample_y)
+            generalization_error_list.append(generalization_error)
+            #calculate the training error (loss) for the current model weights w
+            loss_list.append(self.function.average(w_checkpoint, self.training_sample_x, self.training_sample_y, self.function.value))
+            #the inner loop list of w is initialized, will fill in w_1,...,w_m (m=epochlength)
+            w_innerloop_list=[]
+            #start the inner loop at w_checkpoint
+            w_current=w_checkpoint
+            for i in range(epochlength):
+                w_next = w_current + self.SVRG_update(w_current, lr, w_checkpoint)
+                w_innerloop_list.append(w_next)
+                w_current=w_next
+            #update the checkpoint by randomly select from the list in the inner loop w_1,...,w_m (m=epochlength)
+            w_checkpoint=choice(list(w_innerloop_list))
+        return trajectory_w, loss_list, generalization_error_list
     
     #the SARAH estimator
     def SARAH(self, w, lr, batchsize, epochlength):
@@ -167,7 +196,7 @@ if __name__ == "__main__":
     test_sample_x=np.random.normal(0,1,size=2)
     test_sample_y=np.random.normal(0,1,size=1)
     #optimization step obtain a sequence of losses and weights trajectory
-    for optname in {"SGD"}:
+    for optname in {"SVRG"}:
         function=LossFunction(axA=A, axB=B)
         optimizer=stochastic_optimizer(function=function, 
                                        training_sample_x=training_sample_x,
@@ -176,7 +205,11 @@ if __name__ == "__main__":
                                        test_sample_y=test_sample_y)
         if optname=="SGD":
             trajectory_w, loss_list, generalization_error_list=optimizer.SGD_optimizer(w_init, num_steps, lr, batchsize)
-
+        elif optname=="SVRG":
+            trajectory_w, loss_list, generalization_error_list=optimizer.SVRG_optimizer(w_init, num_epochs, epochlength, lr)
+            print(trajectory_w)
+        else:
+            print(0)
 
 
 
@@ -200,10 +233,16 @@ if __name__ == "__main__":
             line =ax.plot(trajectory_w_1[0:i],trajectory_w_2[0:i],loss_list[0:i],'b:', markersize=8)
             point = ax.plot(trajectory_w_1[i-1:i],trajectory_w_2[i-1:i],loss_list[i-1:i],'bo', markersize=10)
             return line,point
-        anim = animation.FuncAnimation(fig, anmi, init_func=init,
-                                       frames=num_steps, interval=10, blit=False,repeat=False)
-        anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.gif', writer='imagemagick')
-
+        if optname=="SGD":
+            anim = animation.FuncAnimation(fig, anmi, init_func=init,
+                                           frames=num_steps, interval=10, blit=False,repeat=False)
+            anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.gif', writer='imagemagick')
+        elif optname=="SVRG":
+            anim = animation.FuncAnimation(fig, anmi, init_func=init,
+                                           frames=num_epochs, interval=10, blit=False,repeat=False)
+            anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.gif', writer='imagemagick')
+        else:
+            print(0)
 
 
         #plot the training error (loss) and the generalization error
@@ -213,12 +252,22 @@ if __name__ == "__main__":
         plt.xlabel('iteration')
         plt.ylabel('loss')
         plt.title(optname)
-        plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
+        if optname=="SGD":
+            plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
+        elif optname=="SVRG":
+            plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength'+str(epochlength)+'.jpg')
+        else:
+            print(0)     
         plt.show()
 
         plt.plot(generalization_error_list)
         plt.xlabel('iteration')
         plt.ylabel('generalization error')
         plt.title(optname)
-        plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
+        if optname=="SGD":
+            plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
+        elif optname=="SVRG":
+            plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength'+str(epochlength)+'.jpg')
+        else:
+            print(0)
         plt.show()
