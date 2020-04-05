@@ -26,10 +26,10 @@ B=1
 training_sample_size=100
 batchsize=1
 #for SGD, set the number of iteration steps
-num_steps=1
+num_steps=1000
 #for SVRG, set the number of epochs and epochlength (m)
-num_epochs=1000
-epochlength=10
+num_epochs=200
+epochlength=5
 #set the learning rate
 lr=0.01
 
@@ -197,12 +197,14 @@ if __name__ == "__main__":
     test_sample_y=np.random.normal(0,1,size=1)
     #optimization step obtain a sequence of losses and weights trajectory
     for optname in {"SVRG"}:
+        #set the loss function and the stochastic optimizer with given training and test samples
         function=LossFunction(axA=A, axB=B)
         optimizer=stochastic_optimizer(function=function, 
                                        training_sample_x=training_sample_x,
                                        training_sample_y=training_sample_y,
                                        test_sample_x=test_sample_x,
                                        test_sample_y=test_sample_y)
+        #optimize, SGD, SVRG and SARAH
         if optname=="SGD":
             trajectory_w, loss_list, generalization_error_list=optimizer.SGD_optimizer(w_init, num_steps, lr, batchsize)
         elif optname=="SVRG":
@@ -210,7 +212,7 @@ if __name__ == "__main__":
         else:
             print(0)
 
-
+        #print the weight, loss and generalization error sequence
         print("weight trajectory=", trajectory_w)
         print("loss=", loss_list)
         print("generalization error=", generalization_error_list)
@@ -257,7 +259,7 @@ if __name__ == "__main__":
         if optname=="SGD":
             plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
         elif optname=="SVRG":
-            plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength'+str(epochlength)+'.jpg')
+            plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.jpg')
         else:
             print(0)     
         plt.show()
@@ -269,7 +271,7 @@ if __name__ == "__main__":
         if optname=="SGD":
             plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
         elif optname=="SVRG":
-            plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength'+str(epochlength)+'.jpg')
+            plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.jpg')
         else:
             print(0)
         plt.show()
