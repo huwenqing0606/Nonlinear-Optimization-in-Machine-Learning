@@ -31,8 +31,8 @@ batchsize=1
 #for SGD, set the number of iteration steps
 num_steps=1000
 #for SVRG, set the number of epochs and epochlength (m)
-num_epochs=500
-epochlength=500
+num_epochs=100
+epochlength=10
 #set the learning rate
 lr=0.01
 
@@ -176,8 +176,8 @@ class stochastic_optimizer(object):
             w_checkpoint=choice(list(w_innerloop_list))
         return trajectory_w, loss_list, test_error_list
     
-    #the SARAH estimator = the inner loop update via variance-reduced stochastic gradients
-    def SARAH(self, w_current, w_previous, lr, update_previous):
+    #the SARAH estimator update = the inner loop update via variance-reduced stochastic gradients
+    def SARAH_update(self, w_current, w_previous, lr, update_previous):
         #sample one random index from the set [0,...,training_size-1]
         trainingsize=size(self.training_sample_x, self.training_sample_y)
         index=choice(list(range(0,trainingsize)))
@@ -207,12 +207,13 @@ class stochastic_optimizer(object):
             #start the inner loop at w_checkpoint
             w_previous=w_checkpoint
             w_innerloop_list.append(w_previous)
-            update_previous=self.function.average(w_checkpoint, self.training_sample_x, self.training_sample_y, self.function.grad)
+            update_previous=-lr*self.function.average(w_checkpoint, self.training_sample_x, self.training_sample_y, self.function.grad)
             w_current=w_previous-lr*update_previous
             for i in range(epochlength):
                 w_innerloop_list.append(w_current)
-                w_next = w_current + self.SARAH_update(w_current, w_previous, lr, update_previous)
-                update_previous = self.SARAH_update(w_current, w_previous, lr, update_previous)
+                update_current = self.SARAH_update(w_current, w_previous, lr, update_previous)
+                w_next = w_current + update_current 
+                update_previous = update_current
                 w_previous = w_current
                 w_current = w_next
             #update the checkpoint by randomly select from the list in the inner loop w_1,...,w_m (m=epochlength)
@@ -238,7 +239,7 @@ if __name__ == "__main__":
     test_sample_x=np.random.normal(0,1,size=2)
     test_sample_y=np.random.normal(0,1,size=1)
     #optimization step obtain a sequence of losses and weights trajectory
-    for optname in {"SARAH"}:
+    for optname in {"SVRG"}:
         #set the loss function and the stochastic optimizer with given training and test samples
         function=LossFunction(axA=A, axB=B)
         optimizer=stochastic_optimizer(function=function, 
