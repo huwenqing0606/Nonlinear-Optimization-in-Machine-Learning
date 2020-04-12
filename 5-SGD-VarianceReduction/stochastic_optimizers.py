@@ -16,6 +16,9 @@ from mpl_toolkits.mplot3d import Axes3D
 from matplotlib import animation
 from random import sample, choice
 
+import datetime
+starttime = datetime.datetime.now()
+
 import tensorflow as tf
 tf.enable_eager_execution()
 
@@ -28,8 +31,8 @@ batchsize=1
 #for SGD, set the number of iteration steps
 num_steps=1000
 #for SVRG, set the number of epochs and epochlength (m)
-num_epochs=200
-epochlength=5
+num_epochs=500
+epochlength=500
 #set the learning rate
 lr=0.01
 
@@ -118,19 +121,19 @@ class stochastic_optimizer(object):
         w_current=w_init
         trajectory_w=[]
         loss_list=[]
-        generalization_error_list=[]
+        test_error_list=[]
         for i in range(steps):
             #record the current model weights w 
             trajectory_w.append(w_current) 
-            #calculate the generalization error for the current model weights w
-            generalization_error=self.function.value(w_current, self.test_sample_x, self.test_sample_y)
-            generalization_error_list.append(generalization_error)
+            #calculate the test error for the current model weights w
+            test_error=self.function.value(w_current, self.test_sample_x, self.test_sample_y)
+            test_error_list.append(test_error)
             #calculate the training error (loss) for the current model weights w
             loss_list.append(self.function.average(w_current, self.training_sample_x, self.training_sample_y, self.function.value))
             #update w via stochastic optimization
             w=w_current+self.SGD_update(w_current, lr, batchsize)
             w_current=w
-        return trajectory_w, loss_list, generalization_error_list
+        return trajectory_w, loss_list, test_error_list
 
     #the SVRG estimator update = the inner loop update via variance-reduced stochastic gradients
     # w_checkpoint is the checkpoint w value recorded, i.e., the w-tilde in the Algorithm in the SVRG paper (Johnson-Zhang, NIPS 2013)
@@ -152,13 +155,13 @@ class stochastic_optimizer(object):
         w_checkpoint=w_init
         trajectory_w=[]
         loss_list=[]
-        generalization_error_list=[]
+        test_error_list=[]
         for s in range(epochs):
             #record the current model weights w 
             trajectory_w.append(w_checkpoint) 
-            #calculate the generalization error for the current model weights w
-            generalization_error=self.function.value(w_checkpoint, self.test_sample_x, self.test_sample_y)
-            generalization_error_list.append(generalization_error)
+            #calculate the test error for the current model weights w
+            test_error=self.function.value(w_checkpoint, self.test_sample_x, self.test_sample_y)
+            test_error_list.append(test_error)
             #calculate the training error (loss) for the current model weights w
             loss_list.append(self.function.average(w_checkpoint, self.training_sample_x, self.training_sample_y, self.function.value))
             #the inner loop list of w is initialized, will fill in w_1,...,w_m (m=epochlength)
@@ -171,12 +174,51 @@ class stochastic_optimizer(object):
                 w_current=w_next
             #update the checkpoint by randomly select from the list in the inner loop w_1,...,w_m (m=epochlength)
             w_checkpoint=choice(list(w_innerloop_list))
-        return trajectory_w, loss_list, generalization_error_list
+        return trajectory_w, loss_list, test_error_list
     
-    #the SARAH estimator
-    def SARAH(self, w, lr, batchsize, epochlength):
-        return 0
-
+    #the SARAH estimator = the inner loop update via variance-reduced stochastic gradients
+    def SARAH(self, w_current, w_previous, lr, update_previous):
+        #sample one random index from the set [0,...,training_size-1]
+        trainingsize=size(self.training_sample_x, self.training_sample_y)
+        index=choice(list(range(0,trainingsize)))
+        #return the SARAH version of the variance-reduced stochastic gradient
+        grad_1 = self.function.grad(w_current, self.training_sample_x[index], self.training_sample_y[index])
+        grad_2 = self.function.grad(w_previous, self.training_sample_x[index], self.training_sample_y[index])
+        grad = grad_1 - grad_2 
+        update = - lr*grad + update_previous
+        return update
+    
+    #the SARAH optimizer, iterates a certain number of epochs, with each epoch under a cetain length (epochlength=m), to get the updated weights
+    def SARAH_optimizer(self, w_init, epochs, epochlength, lr):
+        w_checkpoint=w_init
+        trajectory_w=[]
+        loss_list=[]
+        test_error_list=[]
+        for s in range(epochs):
+            #record the current model weights w 
+            trajectory_w.append(w_checkpoint) 
+            #calculate the test error for the current model weights w
+            test_error=self.function.value(w_checkpoint, self.test_sample_x, self.test_sample_y)
+            test_error_list.append(test_error)
+            #calculate the training error (loss) for the current model weights w
+            loss_list.append(self.function.average(w_checkpoint, self.training_sample_x, self.training_sample_y, self.function.value))
+            #the inner loop list of w is initialized, will fill in w_1,...,w_m (m=epochlength)
+            w_innerloop_list=[]
+            #start the inner loop at w_checkpoint
+            w_previous=w_checkpoint
+            w_innerloop_list.append(w_previous)
+            update_previous=self.function.average(w_checkpoint, self.training_sample_x, self.training_sample_y, self.function.grad)
+            w_current=w_previous-lr*update_previous
+            for i in range(epochlength):
+                w_innerloop_list.append(w_current)
+                w_next = w_current + self.SARAH_update(w_current, w_previous, lr, update_previous)
+                update_previous = self.SARAH_update(w_current, w_previous, lr, update_previous)
+                w_previous = w_current
+                w_current = w_next
+            #update the checkpoint by randomly select from the list in the inner loop w_1,...,w_m (m=epochlength)
+            w_checkpoint=choice(list(w_innerloop_list))
+        return trajectory_w, loss_list, test_error_list
+    
 
         
         
@@ -184,7 +226,7 @@ class stochastic_optimizer(object):
 running the code, plot 
 (1) the trajectory animation; 
 (2) the evolution of the training error; 
-(3) the evolution of generalization error.
+(3) the evolution of test error.
 """
 if __name__ == "__main__":
     #generate the training samples (x_i, y_i)
@@ -196,7 +238,7 @@ if __name__ == "__main__":
     test_sample_x=np.random.normal(0,1,size=2)
     test_sample_y=np.random.normal(0,1,size=1)
     #optimization step obtain a sequence of losses and weights trajectory
-    for optname in {"SVRG"}:
+    for optname in {"SARAH"}:
         #set the loss function and the stochastic optimizer with given training and test samples
         function=LossFunction(axA=A, axB=B)
         optimizer=stochastic_optimizer(function=function, 
@@ -206,16 +248,18 @@ if __name__ == "__main__":
                                        test_sample_y=test_sample_y)
         #optimize, SGD, SVRG and SARAH
         if optname=="SGD":
-            trajectory_w, loss_list, generalization_error_list=optimizer.SGD_optimizer(w_init, num_steps, lr, batchsize)
+            trajectory_w, loss_list, test_error_list=optimizer.SGD_optimizer(w_init, num_steps, lr, batchsize)
         elif optname=="SVRG":
-            trajectory_w, loss_list, generalization_error_list=optimizer.SVRG_optimizer(w_init, num_epochs, epochlength, lr)
+            trajectory_w, loss_list, test_error_list=optimizer.SVRG_optimizer(w_init, num_epochs, epochlength, lr)
+        elif optname=="SARAH":
+            trajectory_w, loss_list, test_error_list=optimizer.SARAH_optimizer(w_init, num_epochs, epochlength, lr)        
         else:
             print(0)
 
-        #print the weight, loss and generalization error sequence
+        #print the weight, loss and test error sequence
         print("weight trajectory=", trajectory_w)
         print("loss=", loss_list)
-        print("generalization error=", generalization_error_list)
+        print("test error=", test_error_list)
         
         #plot the trajctory as an animation
         trajectory_w_1=[]
@@ -245,11 +289,15 @@ if __name__ == "__main__":
             anim = animation.FuncAnimation(fig, anmi, init_func=init,
                                            frames=num_epochs, interval=10, blit=False,repeat=False)
             anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.gif', writer='imagemagick')
+        elif optname=="SARAH":
+            anim = animation.FuncAnimation(fig, anmi, init_func=init,
+                                           frames=num_epochs, interval=10, blit=False,repeat=False)
+            anim.save(optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.gif', writer='imagemagick')
         else:
             print(0)
 
 
-        #plot the training error (loss) and the generalization error
+        #plot the training error (loss) and the test error
         fig = plt.figure()
         mpl.rcParams['legend.fontsize'] = 10
         plt.plot(loss_list)
@@ -260,18 +308,25 @@ if __name__ == "__main__":
             plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
         elif optname=="SVRG":
             plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.jpg')
+        elif optname=="SARAH":
+            plt.savefig('Loss_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.jpg')
         else:
             print(0)     
         plt.show()
 
-        plt.plot(generalization_error_list)
+        plt.plot(test_error_list)
         plt.xlabel('iteration')
-        plt.ylabel('generalization error')
+        plt.ylabel('test error')
         plt.title(optname)
         if optname=="SGD":
-            plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
+            plt.savefig('TestError_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_batchsize='+str(batchsize)+'_learningrate='+str(lr)+'_steps='+str(num_steps)+'.jpg')
         elif optname=="SVRG":
-            plt.savefig('Generalization_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.jpg')
+            plt.savefig('TestError_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.jpg')
+        elif optname=="SARAH":
+            plt.savefig('TestError_'+optname+'_A='+str(A)+'_B='+str(B)+'_trainingsize='+str(training_sample_size)+'_learningrate='+str(lr)+'_epochs='+str(num_epochs)+'_epochlength='+str(epochlength)+'.jpg')
         else:
             print(0)
         plt.show()
+
+endtime = datetime.datetime.now()
+print("running time:", (endtime-starttime).seconds, "seconds.")
