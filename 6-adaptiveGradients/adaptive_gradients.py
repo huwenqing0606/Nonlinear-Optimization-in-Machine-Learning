@@ -46,8 +46,7 @@ for (key,value) in optimizer_set.items():
                   metrics=['accuracy'])
 
     # train and fit the model, then validate
-    print("\n********************* Optimizer=" + str(key) + ", batch_size=" + str(
-        batch_size) + ", learning_rate=" + str(learning_rate) + " *********************")
+    print("\n********************* Optimizer=" + str(key) + ", batch_size=" + str(batch_size) + ", learning_rate=" + str(learning_rate) + " *********************")
     
     history = model.fit(x_train,
                         y_train,
