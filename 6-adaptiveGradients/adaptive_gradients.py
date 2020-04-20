@@ -13,6 +13,7 @@ x_train, x_test = x_train / 255.0, x_test / 255.0
 
 # set the number of epochs and the batch size
 num_epochs = 5
+# iterations in an epoch = training sample size / batchsize
 
 # set the learning rate and batch size#
 learning_rate = 0.1
@@ -27,7 +28,9 @@ optimizer_set = {"SGD": tf.keras.optimizers.SGD(learning_rate=learning_rate, mom
                  "Adadelta": tf.keras.optimizers.Adadelta(learning_rate=learning_rate, rho=0.95, epsilon=1e-07),
                  "Adam": tf.keras.optimizers.Adam(learning_rate=learning_rate, beta_1=0.9, beta_2=0.999, epsilon=1e-07,
                                                   amsgrad=False)}
-df = pd.DataFrame(columns=('loss','accuracy','val_loss','val_accuracy'))
+
+dataframe = pd.DataFrame(columns=('loss','accuracy','val_loss','val_accuracy'))
+
 # Training via different optimizers and different learning rates and batch sizes#
 for (key,value) in optimizer_set.items():
     # build the neural network model using keras sequencial model
@@ -45,21 +48,24 @@ for (key,value) in optimizer_set.items():
     # train and fit the model, then validate
     print("\n********************* Optimizer=" + str(key) + ", batch_size=" + str(
         batch_size) + ", learning_rate=" + str(learning_rate) + " *********************")
+    
     history = model.fit(x_train,
                         y_train,
                         epochs=num_epochs,
                         batch_size=batch_size,
                         verbose=2,
                         validation_data=(x_test, y_test))
-    df.loc[df.shape[0] + 1] = [history.history['loss'],history.history['accuracy'],history.history['val_loss'],history.history['val_accuracy']]
-df.index = ["SGD","Adadelta","RMSprop", "Adagrad", "Adam"]
+    
+    dataframe.loc[dataframe.shape[0] + 1] = [history.history['loss'],history.history['accuracy'],history.history['val_loss'],history.history['val_accuracy']]
+
+dataframe.index = ["SGD","Adadelta","RMSprop", "Adagrad", "Adam"]
 
 
 for i in range(len(optimizer_set)):
-    plt.plot(df['loss'][i])
+    plt.plot(dataframe['loss'][i])
 plt.title('Training Loss_lr=' + str(learning_rate) + '_bs=' + str(batch_size))
 plt.ylabel('Loss')
 plt.xlabel('Epoch')
-plt.legend(df.index, loc='upper right')
+plt.legend(dataframe.index, loc='upper right')
 plt.savefig('training_loss_lr=' + str(learning_rate) + '_bs=' + str(batch_size) + '.png')
 plt.show()
