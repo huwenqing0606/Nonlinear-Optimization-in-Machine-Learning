@@ -1,7 +1,10 @@
 """
 TensorFlow 2.0
 Python 3.7
-MNIST dataset trained on a small network, 5 different optimizers
+
+author: Jiali Zhang
+title: MNIST dataset trained on a small network, 5 different optimizers
+
 """
 
 import tensorflow as tf
@@ -46,15 +49,14 @@ for (key,value) in optimizer_set.items():
                   metrics=['accuracy'])
 
     # train and fit the model
-    print("\n********************* Optimizer=" + str(key) + ", batch_size=" + str(
-        batch_size) + ", learning_rate=" + str(learning_rate) + " *********************")
+    print("\n********************* Optimizer=" + str(key) + ", batch_size=" + str(batch_size) + ", learning_rate=" + str(learning_rate) + " *********************")
     """
     when running the SGD optimizer, the number of iterations in each epoch depends on the batch_size.
     for example:
         num_iteration = int(mnist.num_train_data // batch_size)
         937 = 60000 // 64
     """
-    MLP = model.fit(x_train,
+    MLP =     model.fit(x_train,
                         y_train,
                         epochs=num_epochs,
                         batch_size=batch_size,
