@@ -2,7 +2,7 @@
 TensorFlow 2.0
 Python 3.7
 
-author: Jiali Zhang
+author: Jiali Zhang (Missouri S&T)
 title: MNIST dataset trained on a small network, 5 different optimizers
 
 """
