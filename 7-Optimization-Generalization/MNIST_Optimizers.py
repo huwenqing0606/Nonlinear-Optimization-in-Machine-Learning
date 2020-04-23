@@ -1,6 +1,8 @@
 
 """
 MNIST dataset trained on a small network, different optimizers
+
+author: Wenqing Hu and Jiali Zhang (Missouri S&T)
 """
 
 import tensorflow as tf
