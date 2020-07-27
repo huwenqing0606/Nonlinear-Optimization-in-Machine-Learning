@@ -9,3 +9,5 @@ Experiment on (1) different hidden layer sizes ($n_1, ..., n_L$); (2) different 
 Following the above, plot the 3-d graph of the loss function and the trajectory of the gradient descent algorithm by picking two network weight parameters as variables (from a certain layer to its next layer) and randomly choosing other network parameters as i.i.d. samples of normal distributions that follow the LeCun initialization: $w_{ij}^{(l)}\sim \mathcal{N}(0, 1/n_l)$ and $b_i^{(l)}\sim \mathcal{N}(0, 1)$, where $n_l$ is the network width at level $l$.
 
 Your code must be written without using existing packages and functions from deep learning frameworks such as tensorflow, keras or pytorch.
+
+Do the same thing for the Nesterov's accelerated gradient descent and the stochastic gradient descent algorithms.
