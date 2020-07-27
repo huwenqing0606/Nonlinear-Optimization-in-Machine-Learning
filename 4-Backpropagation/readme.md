@@ -10,4 +10,4 @@ Following the above, plot the 3-d graph of the loss function and the trajectory 
 
 Your code must be written without using existing packages and functions from deep learning frameworks such as tensorflow, keras or pytorch.
 
-Do the same thing for the Nesterov's accelerated gradient descent and the stochastic gradient descent algorithms.
+<i>(for Duke-Kunshan lectures 2020 summer) Do the same thing for the Nesterov's accelerated gradient descent and the stochastic gradient descent algorithms.</i>
