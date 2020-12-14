@@ -1,4 +1,4 @@
-<b>MATH6001. Nonlinear Optimization in Machine Learning.</b>
+<b>Nonlinear Optimization in Machine Learning.</b>
 
 1. Activation functions
 
