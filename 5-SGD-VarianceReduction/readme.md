@@ -1,4 +1,4 @@
-<b>MATH6001 Nonlinear Optimization in Machine Learning at Missouri S&T in Spring-2020</b>
+<b>MATH6001 Nonlinear Optimization in Machine Learning</b>
 
 5. SGD and Variance-Reduced SGD
 
