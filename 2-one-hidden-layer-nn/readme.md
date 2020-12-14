@@ -1,4 +1,4 @@
-<b>MATH6001-106. Nonlinear Optimization in Machine Learning.</b>
+<b>MATH6001. Nonlinear Optimization in Machine Learning.</b>
 
 2. The shape and loss landscape of output function for one hidden layer funnly connected neural networks.
 
