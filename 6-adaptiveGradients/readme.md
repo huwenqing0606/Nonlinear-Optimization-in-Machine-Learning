@@ -1,4 +1,4 @@
-<b>MATH6001 Nonlinear Optimization in Machine Learning at Missouri S&T</b>
+<b>Nonlinear Optimization in Machine Learning</b>
 
 6. Adaptive Gradient Methods
 
