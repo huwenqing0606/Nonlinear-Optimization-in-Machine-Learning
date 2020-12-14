@@ -1,4 +1,4 @@
-<b>MATH6001. Nonlinear Optimization in Machine Learning.</b>
+<b>Nonlinear Optimization in Machine Learning.</b>
 
 4. Backpropagation algorithm
 
